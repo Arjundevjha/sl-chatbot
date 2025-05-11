@@ -81,7 +81,7 @@ async function responseGen(prompt) {
 }
 
 // Process endpoint
-app.post('/process', async (req, res) => {
+app.post('/api/process', async (req, res) => {
   if (limitPrompt >= 6) {
     return res.status(400).json({ error: 'You have reached the maximum allowed prompts.' });
   }
