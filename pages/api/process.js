@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   const { prompt } = req.body;
-  const backendUrl = 'http://0.0.0.0:5000/process';
+  const backendUrl = 'http://0.0.0.0:5000/api/process';
 
   try {
     const response = await fetch(backendUrl, {
