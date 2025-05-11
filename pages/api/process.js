@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   const { prompt } = req.body;
-  const backendUrl = 'https://sl-chatbot-1.onrender.com/process';
+  const backendUrl = process.env.BACKEND_URL || 'http://127.0.0.1:5000/process';
 
   try {
     const response = await fetch(backendUrl, {
