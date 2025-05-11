@@ -69,15 +69,23 @@ async function responseGen(prompt) {
     chatHistory.push({ role: 'model', parts: [{ text: responseText }] });
     return responseText;
   } catch (error) {
-    console.error('Error in response generation:', error);
-    if (error.message.includes('API key')) {
-      return 'Error: Invalid or missing API key. Please check your configuration.';
-    } else if (error.message.includes('quota')) {
-      return 'Error: API quota exceeded. Please try again later.';
-    } else {
-      return `Error generating response: ${error.message}`;
+        console.error('Error in response generation:', error);
+        let errorMessage = 'Error generating response.'; // Generic message
+        let statusCode = 500; // Default server error status
+
+        if (error.message.includes('API key')) {
+            errorMessage = 'Invalid or missing API key.';
+            statusCode = 401; // Unauthorized
+        } else if (error.message.includes('quota')) {
+            errorMessage = 'API quota exceeded.';
+            statusCode = 429; // Too Many Requests
+        } else {
+            errorMessage = error.message;
+        }
+
+        // IMPORTANT: Send a JSON response!
+        return { error: errorMessage, status: statusCode }; 
     }
-  }
 }
 
 // Process endpoint
@@ -105,6 +113,9 @@ app.post('/process', async (req, res) => {
     
     // Generate response
     const response = await responseGen(prompt);
+    if (response.error) {
+            return res.status(response.status || 500).json({ error: response.error });
+        }
     limitPrompt += 1;
     
     return res.json({ response });
